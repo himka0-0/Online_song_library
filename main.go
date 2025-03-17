@@ -18,8 +18,11 @@ func main() {
 	config.InitDB()
 	config.DB.AutoMigrate(&models.Songs{})
 	r := gin.Default()
+	//унес бы в routers,но пока мало и так сойдет
 	r.GET("/", controllers.SongPage)
+	r.GET("/verse/:id", controllers.VersePage)
 	r.POST("/", controllers.CreateSongHandler)
+	r.PUT("/", controllers.ChangeSongHandler)
 	r.DELETE("/", controllers.DeleteSongHandler)
 	r.Run(":8080")
 }

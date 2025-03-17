@@ -14,6 +14,7 @@ func CreateSongHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Println("не парсится пришедшие данные для создания лекцции", err)
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "Не правильно введены данные"})
+		return
 	}
 	input.Group = strings.ToLower(input.Group)
 	input.Song = strings.ToLower(input.Song)
