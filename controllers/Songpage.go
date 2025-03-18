@@ -11,6 +11,22 @@ import (
 	"strings"
 )
 
+// SongPage godoc
+// @Summary      Получение списка песен с фильтрацией и пагинацией
+// @Description  Возвращает отфильтрованный список песен. Параметры запроса позволяют фильтровать по музыкальной группе, дате релиза, названию, тексту и ссылке. Также поддерживается пагинация через параметры limit и offset.
+// @Tags         Songs
+// @Accept       json
+// @Produce      json
+// @Param        grope  query    string  false  "Музыкальная группа"
+// @Param        date   query    string  false  "Дата релиза"
+// @Param        song   query    string  false  "Название песни"
+// @Param        text   query    string  false  "Текст песни"
+// @Param        link   query    string  false  "Ссылка на песню"
+// @Param        limit  query    int     false  "Количество записей на страницу (по умолчанию 10)"
+// @Param        offset query    int     false  "Смещение (по умолчанию 0)"
+// @Success      200    {object} models.ResponseSongs "Успешный ответ с данными и длиной списка"
+// @Failure      500    {object} map[string]string    "Ошибка поиска данных в БД"
+// @Router       / [get]
 func SongPage(c *gin.Context) {
 	//параметры фильтрации
 	filterGrope := strings.ToLower(c.Query("grope"))

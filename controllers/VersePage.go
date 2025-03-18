@@ -13,6 +13,19 @@ import (
 	"strings"
 )
 
+// VersePage godoc
+// @Summary      Получение куплетов текста песни
+// @Description  Для заданного идентификатора песни возвращает куплеты (группы по 4 строки) с пагинацией. Если текста песни нет или он пустой, возвращается соответствующая ошибка.
+// @Tags         Songs
+// @Accept       json
+// @Produce      json
+// @Param        id     path     string  true  "ID песни"
+// @Param        limit  query    int     false "Количество групп (куплетов) на странице (по умолчанию 2)"
+// @Param        offset query    int     false "Смещение (по умолчанию 0)"
+// @Success      200    {object} map[string]interface{} "Успешный ответ с куплетами и количеством страниц"
+// @Failure      404    {object} map[string]string    "Запись с указанным ID не найдена"
+// @Failure      500    {object} map[string]string    "Ошибка при поиске записи или извлечении текста"
+// @Router       /verse/{id} [get]
 func VersePage(c *gin.Context) {
 	//id песни
 	urlID := c.Param("id")

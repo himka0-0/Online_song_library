@@ -11,6 +11,19 @@ import (
 	"online_song/models"
 )
 
+// ChangeSongHandler обновляет данные существующей песни
+//
+// @Summary      Обновление песни
+// @Description  Обновляет данные песни в базе данных по переданному JSON. В JSON должны быть указаны все нужные поля, включая ID для идентификации записи.
+// @Tags         Songs
+// @Accept       json
+// @Produce      json
+// @Param        song  body      models.Songs true "Объект песни с новыми данными"
+// @Success      200   {object}  map[string]string "Данные успешно обновлены"
+// @Failure      400   {object}  map[string]string "Неправильно введены данные или данные не сохранены"
+// @Failure      404   {object}  map[string]string "Запись с указанным ID не найдена"
+// @Failure      500   {object}  map[string]string "Ошибка при поиске записи"
+// @Router       / [put]
 func ChangeSongHandler(c *gin.Context) {
 	var input models.Songs
 	if err := c.ShouldBindJSON(&input); err != nil {

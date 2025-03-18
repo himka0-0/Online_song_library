@@ -1,0 +1,249 @@
+definitions:
+  models.CreateSong:
+    properties:
+      Group:
+        type: string
+      Song:
+        type: string
+    type: object
+  models.DeleteSong:
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
+      song:
+        type: string
+    type: object
+  models.ResponseSongs:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Songs'
+        type: array
+      length:
+        type: integer
+    type: object
+  models.Songs:
+    properties:
+      id:
+        type: integer
+      link:
+        type: string
+      muzgroup:
+        type: string
+      releaseDate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет песню из базы данных по указанному идентификатору, переданному
+        в теле запроса.
+      parameters:
+      - description: Объект с ID песни для удаления
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeleteSong'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Запись успешно удалена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка при удалении записи или некорректные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удаление песни
+      tags:
+      - Songs
+    get:
+      consumes:
+      - application/json
+      description: Возвращает отфильтрованный список песен. Параметры запроса позволяют
+        фильтровать по музыкальной группе, дате релиза, названию, тексту и ссылке.
+        Также поддерживается пагинация через параметры limit и offset.
+      parameters:
+      - description: Музыкальная группа
+        in: query
+        name: grope
+        type: string
+      - description: Дата релиза
+        in: query
+        name: date
+        type: string
+      - description: Название песни
+        in: query
+        name: song
+        type: string
+      - description: Текст песни
+        in: query
+        name: text
+        type: string
+      - description: Ссылка на песню
+        in: query
+        name: link
+        type: string
+      - description: Количество записей на страницу (по умолчанию 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Смещение (по умолчанию 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ с данными и длиной списка
+          schema:
+            $ref: '#/definitions/models.ResponseSongs'
+        "500":
+          description: Ошибка поиска данных в БД
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получение списка песен с фильтрацией и пагинацией
+      tags:
+      - Songs
+    post:
+      consumes:
+      - application/json
+      description: Создает новую песню, получая дополнительную информацию через внешний
+        API. В теле запроса должны передаваться данные, необходимые для создания песни.
+      parameters:
+      - description: Данные для создания песни
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateSong'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Песня сохранена успешно
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неправильно введены данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка при получении дополнительной информации или сохранении
+            данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создание новой песни
+      tags:
+      - Songs
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные песни в базе данных по переданному JSON. В JSON
+        должны быть указаны все нужные поля, включая ID для идентификации записи.
+      parameters:
+      - description: Объект песни с новыми данными
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/models.Songs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные успешно обновлены
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Неправильно введены данные или данные не сохранены
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Запись с указанным ID не найдена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка при поиске записи
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновление песни
+      tags:
+      - Songs
+  /verse/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Для заданного идентификатора песни возвращает куплеты (группы по
+        4 строки) с пагинацией. Если текста песни нет или он пустой, возвращается
+        соответствующая ошибка.
+      parameters:
+      - description: ID песни
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Количество групп (куплетов) на странице (по умолчанию 2)
+        in: query
+        name: limit
+        type: integer
+      - description: Смещение (по умолчанию 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ с куплетами и количеством страниц
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Запись с указанным ID не найдена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка при поиске записи или извлечении текста
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получение куплетов текста песни
+      tags:
+      - Songs
+swagger: "2.0"

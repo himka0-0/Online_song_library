@@ -3,9 +3,12 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"online_song/config"
 	"online_song/controllers"
+	_ "online_song/docs"
 	"online_song/logger"
 	"online_song/models"
 )
@@ -26,6 +29,9 @@ func main() {
 	config.DB.AutoMigrate(&models.Songs{})
 
 	r := gin.Default()
+
+	//обращение к свегеру
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	//унес бы в routers,но пока мало и так сойдет
 	r.GET("/", controllers.SongPage)
 	r.GET("/verse/:id", controllers.VersePage)
