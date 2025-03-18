@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
+	"online_song/logger"
 	"os"
 )
 
@@ -22,6 +23,7 @@ func InitDB() {
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Println("Ошибка подключения к бд")
+		logger.Logger.Fatal("Ошибка подключения к бд", zap.Error(err))
 	}
+	logger.Logger.Info("База данных подключена")
 }

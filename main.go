@@ -6,6 +6,7 @@ import (
 	"log"
 	"online_song/config"
 	"online_song/controllers"
+	"online_song/logger"
 	"online_song/models"
 )
 
@@ -15,8 +16,15 @@ func init() {
 	}
 }
 func main() {
+	//Подключение логера
+	logger.InitLogger()
+	defer logger.Logger.Sync()
+	logger.Logger.Info("Приложение запущено")
+
+	//подключение бд
 	config.InitDB()
 	config.DB.AutoMigrate(&models.Songs{})
+
 	r := gin.Default()
 	//унес бы в routers,но пока мало и так сойдет
 	r.GET("/", controllers.SongPage)

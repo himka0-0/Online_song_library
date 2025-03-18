@@ -3,27 +3,28 @@ package controllers
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 	"online_song/config"
+	"online_song/logger"
 	"online_song/models"
 )
 
 func ChangeSongHandler(c *gin.Context) {
 	var input models.Songs
 	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Println("Не правильно введены данные", err)
+		logger.Logger.Warn("Не правильно введены данные", zap.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "Не правильно введены данные"})
 		return
 	}
 	var existingSong models.Songs
 	if err := config.DB.First(&existingSong, "ID = ?", input.ID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			log.Println("Запись с указанным ID не найдена", err)
+			logger.Logger.Warn("Запись с указанным ID не найдена", zap.Error(err))
 			c.JSON(http.StatusNotFound, gin.H{"msg": "Запись с указанным ID не найдена"})
 		} else {
-			log.Println("Ошибка при поиске записи", err)
+			logger.Logger.Warn("Ошибка при поиске записи", zap.Error(err))
 			c.JSON(http.StatusInternalServerError, gin.H{"msg": "Ошибка при поиске записи"})
 		}
 		return
@@ -36,7 +37,7 @@ func ChangeSongHandler(c *gin.Context) {
 		Link:        input.Link,
 	}).Error
 	if err != nil {
-		log.Println("Ошибка обновлении данных песни", err)
+		logger.Logger.Error("Ошибка обновлении данных песни", zap.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "Данные не сохранены"})
 		return
 	}

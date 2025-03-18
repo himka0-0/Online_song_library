@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 	"online_song/config"
+	"online_song/logger"
 	"online_song/models"
 	"strconv"
 	"strings"
@@ -54,7 +55,7 @@ func SongPage(c *gin.Context) {
 	//запрос в бд
 	var filtered_songs []models.Songs
 	if err := query.Find(&filtered_songs).Error; err != nil {
-		log.Println("Ошибка поиска данных в бд", err)
+		logger.Logger.Error("Ошибка поиска данных в бд", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Сервер не нашел данных"})
 		return
 	}

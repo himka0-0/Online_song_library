@@ -3,10 +3,11 @@ package controllers
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 	"online_song/config"
+	"online_song/logger"
 	"online_song/models"
 	"strconv"
 	"strings"
@@ -20,10 +21,10 @@ func VersePage(c *gin.Context) {
 	var existingSong models.Songs
 	if err := config.DB.First(&existingSong, "ID = ?", urlID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			log.Println("Запись с указанным ID не найдена", err)
+			logger.Logger.Warn("Запись с указанным ID не найдена", zap.Error(err))
 			c.JSON(http.StatusNotFound, gin.H{"msg": "Запись с указанным ID не найдена"})
 		} else {
-			log.Println("Ошибка при поиске записи", err)
+			logger.Logger.Warn("Ошибка при поиске записи", zap.Error(err))
 			c.JSON(http.StatusInternalServerError, gin.H{"msg": "Ошибка при поиске записи"})
 		}
 		return
@@ -46,7 +47,7 @@ func VersePage(c *gin.Context) {
 	var songText string
 	err := config.DB.Model(&models.Songs{}).Select("Text").Where("ID=?", urlID).Find(&songText).Error
 	if err != nil {
-		log.Println("Не получилось вытащить текст песни", err)
+		logger.Logger.Error("Не получилось вытащить текст песни", zap.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "Текста песни пока нет"})
 		return
 	}
