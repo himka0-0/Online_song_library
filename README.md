@@ -6,9 +6,11 @@
    cd Online_song_library
   ```
   2.Зайдите в .env:
+  
     Необходимо вставить url стороннего сервиса, согласно ТЗ пункту 2
     Если будете использовать докер, то всё настроено
     Если ручное тестирование, то DB_HOST=db надо изменить на DB_HOST=localhost
+    
   3.Запустите docker-compose:
   ```bash
    docker-compose up --build
