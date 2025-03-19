@@ -1,0 +1,2 @@
+{"level":"info","time":"2025-03-19T08:40:50.116+0400","caller":"runtime/proc.go:272","msg":"Приложение запущено"}
+{"level":"info","time":"2025-03-19T08:40:52.672+0400","caller":"online_song/main.go:28","msg":"База данных подключена"}

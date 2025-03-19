@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-// структура из свагера
+// структура из свагера по ТЗ
 type SongDetail struct {
 	ReleaseDate string `json:"releaseDate"`
 	Text        string `json:"text"`
